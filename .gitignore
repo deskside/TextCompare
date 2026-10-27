@@ -1,0 +1,9 @@
+# Local browser profiles, screenshots and other temporary verification files.
+/tmp/
+
+# Editor and operating system files.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
