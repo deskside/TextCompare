@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>手册文字对比</title>
+<style>
+:root{--ink:#20332f;--paper:#f5f2e9;--accent:#276653}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#dde9dd,transparent 60%),var(--paper);color:var(--ink);font-family:"Microsoft YaHei",sans-serif}main{max-width:1200px;margin:auto;padding:48px 24px}header{border-bottom:1px solid #bcc8bc;padding-bottom:24px}small{letter-spacing:3px;color:var(--accent)}h1{font-family:SimHei,sans-serif;font-size:38px;margin:14px 0}p{line-height:1.7;color:#57675e}.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px}section{background:#ffffffb8;border:1px solid #d4dcd0;border-radius:12px;padding:22px}h2{font-size:19px;margin:0 0 16px}textarea{width:100%;min-height:250px;border:1px solid #bdcbbb;border-radius:6px;padding:14px;font:16px/1.7 SimHei,sans-serif;resize:vertical;background:#fff}textarea:focus{outline:2px solid var(--accent)}button{border:0;border-radius:6px;background:var(--accent);color:white;padding:12px 22px;cursor:pointer;font:inherit}button:disabled{opacity:.45;cursor:default}.actions{display:flex;gap:14px;align-items:center;margin-top:22px}.result{white-space:pre-wrap;overflow-wrap:anywhere;background:white;color:black;min-height:160px;padding:16px;border:1px solid #ddd;font-family:SimHei,"黑体",sans-serif;font-size:10pt;line-height:1.7;margin-bottom:16px}.legend{font-size:14px}.red{color:#f00}.blue{color:#00f}#status{color:var(--accent)}[hidden]{display:none!important}@media(max-width:700px){main{padding:28px 16px}.grid{grid-template-columns:1fr}h1{font-size:29px}.actions{flex-wrap:wrap}}
+.red{color:#c32946}.blue{color:#5883bf}
+.table-input{margin-top:20px;padding:18px 22px;border:1px dashed #9ab4a6;cursor:pointer;transition:background .2s,border-color .2s}.table-input h2{font-size:17px;margin:0 0 8px}.table-input p{margin:0;font-size:14px}.table-input:hover{background:#edf3eb}.table-input:focus{outline:2px solid var(--accent);outline-offset:3px;border-color:var(--accent);background:#edf3eb}.table-input #tableStatus:not(:empty){margin-top:8px;color:var(--accent)}
+.actions{flex-direction:column;justify-content:center;text-align:center}.copy-controls>.table-copy{display:block;margin:12px auto 0}
+.copy-controls{margin-top:24px}.copy-columns{display:grid;grid-template-columns:1fr 1fr;gap:24px}.copy-columns button{justify-self:start}.copy-controls>.table-copy{margin-top:12px}#backToTop{position:fixed;right:24px;bottom:24px;z-index:10;box-shadow:0 4px 18px #20332f30;border:1px solid #ffffff80}button:focus-visible{outline:3px solid #5883bf;outline-offset:3px}@media(max-width:700px){.copy-columns{grid-template-columns:1fr;gap:12px}#backToTop{right:16px;bottom:16px}main{padding-bottom:90px}}
+.copy-controls{display:flex;justify-content:center;align-items:center;gap:16px}.copy-columns{display:contents}.copy-columns button{justify-self:center}.copy-controls>.table-copy{display:inline-block;margin:0}.copy-controls button{white-space:nowrap}
+#compare{padding:15px 38px;border:1px solid #ffffff38;border-radius:10px;background:linear-gradient(120deg,#173e38 0%,#276653 48%,#347b83 100%);box-shadow:0 6px 18px #173e3826,inset 0 1px 0 #ffffff26;font-weight:600;letter-spacing:1px;transition:box-shadow .2s,filter .2s}#compare:hover{filter:brightness(1.1);box-shadow:0 8px 24px #173e3838,inset 0 1px 0 #ffffff26}#compare:active{filter:brightness(.95)}
+@media(max-width:700px){.copy-controls{gap:6px}.copy-controls button{font-size:12px;padding:11px 7px;min-width:0}}@media(prefers-reduced-motion:reduce){#compare{transition:none}}
+body,h1,textarea,.result,button{font-family:"Microsoft YaHei","微软雅黑",sans-serif}
+.table-copy{background:linear-gradient(110deg,#245951,#387d86,#416b85,#245951);background-size:300% 100%;animation:tableFlow 9s ease-in-out infinite;box-shadow:inset 0 1px 0 #ffffff24,0 3px 10px #24595120}.table-copy:disabled{animation-play-state:paused}.table-copy:not(:disabled):hover{filter:brightness(1.08)}
+@keyframes tableFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media(prefers-reduced-motion:reduce){.table-copy{animation:none}}
+.change-summary{text-align:center;margin:24px 0 0;font-size:16px}.change-summary strong{font-variant-numeric:tabular-nums}.result{background-origin:padding-box;background-repeat:no-repeat}
+.compare-wrap{position:relative;isolation:isolate}.fireworks{position:absolute;inset:-105px -115px;pointer-events:none;z-index:2;overflow:hidden}.spark{display:block;position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:var(--spark-color);box-shadow:0 0 7px var(--spark-color);opacity:0;animation:fireworkBurst 1.45s ease-out var(--delay) both}
+@keyframes fireworkBurst{0%{opacity:1;transform:translate(var(--origin-x),var(--origin-y)) scale(.65)}25%,70%{opacity:1}100%{opacity:0;transform:translate(calc(var(--origin-x) + var(--dx)),calc(var(--origin-y) + var(--dy))) scale(.3)}}
+#status.complete{font-weight:700;color:#245951;background:linear-gradient(110deg,#245951,#356888,#833d63,#245951);background-size:300% 100%;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:tableFlow 5s ease-in-out infinite}
+#status.changed{font-weight:700;color:#a52740;animation:statusShake .45s ease-in-out 1}
+@keyframes statusShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+#copyFeedback{color:var(--accent);font-size:14px;text-align:center;margin:12px 0 0;min-height:1.7em}
+.pdf-actions{text-align:center;margin-top:12px}.pdf-actions button{background:#fff;color:var(--accent);border:1px solid #9ab4a6}
+.copy-controls>.table-copy,.pdf-actions button{width:calc(6em + 44px);height:48px;padding:0;line-height:1.5;flex-shrink:0}
+@media(max-width:700px){.copy-controls>.table-copy,.pdf-actions button{font-size:12px;width:calc(6em + 14px);height:40px;padding:0}}
+@media(prefers-reduced-motion:reduce){.spark{animation:none;opacity:1;transform:translate(calc(var(--origin-x) + var(--dx)),calc(var(--origin-y) + var(--dy)))}#status.complete,#status.changed{animation:none}}
+</style>
+<main>
+<header><small>版本修订 · 文字对比</small><h1>👀新旧手册对比，看清变化</h1><p>粘贴两版原始文字。删除标红，新增标蓝，未变化保持黑色。</p><div class="legend"><span class="red">旧版删除</span>　<span class="blue">新版新增</span>　忽略标点、空格与换行差异</div></header>
+<div class="grid"><section><h2><label for="old">旧版文字</label></h2><textarea id="old" placeholder="在这里粘贴旧版文字"></textarea></section><section><h2><label for="new">新版文字</label></h2><textarea id="new" placeholder="在这里粘贴新版文字"></textarea></section></div>
+<section id="tablePaste" class="table-input" tabindex="0" role="group" aria-labelledby="tablePasteTitle" aria-describedby="tablePasteHelp tableStatus"><h2 id="tablePasteTitle">或者，你也可以粘贴1×2表格</h2><p id="tablePasteHelp">点击此区域后按 Ctrl+V。从 WPS 文字或表格复制1行×2列，左列旧版、右列新版，粘贴后自动填入上方输入框。</p><p id="tableStatus" role="status" aria-live="polite"></p></section>
+<div class="actions"><div class="compare-wrap"><button id="compare">对比并标色</button><div id="fireworks" class="fireworks" aria-hidden="true"></div></div><span id="status" role="status" aria-live="polite"></span></div>
+<p id="copyFeedback" role="status" aria-live="polite"></p>
+<p id="changeSummary" class="change-summary" role="status" aria-live="polite" hidden>本次删除 <strong id="deletedCount" class="red">0</strong> 字，新增 <strong id="addedCount" class="blue">0</strong> 字</p>
+<div id="copyTop" class="copy-controls" role="group" aria-label="结果上方复制操作" hidden><button id="copyOld" disabled>复制旧版文字</button><button id="copyTable" class="table-copy" disabled>复制1×2表格</button><button id="copyNew" disabled>复制新版文字</button></div>
+<div id="pdfTop" class="pdf-actions" hidden><button id="exportPdf" disabled>导出 PDF</button></div>
+<div id="results" class="grid" hidden><section><h2>旧版标注结果</h2><div id="oldResult" class="result"></div></section><section><h2>新版标注结果</h2><div id="newResult" class="result"></div></section></div>
+<div id="copyBottom" class="copy-controls" role="group" aria-label="结果下方复制操作" hidden><button id="copyOldBottom" disabled>复制旧版文字</button><button id="copyTableBottom" class="table-copy" disabled>复制1×2表格</button><button id="copyNewBottom" disabled>复制新版文字</button></div>
+<div id="pdfBottom" class="pdf-actions" hidden><button id="exportPdfBottom" disabled>导出 PDF</button></div>
+<p id="pasteHint" style="text-align:center" hidden>粘贴到 WPS 文字时，请选择“保留源格式”，复制后文字为黑体、10磅字体</p>
+</main>
+<button id="backToTop" type="button" hidden>↑ 回到顶部</button>
+<script>
+const el=id=>document.getElementById(id);
+function setStatus(message,state=''){el('status').className=state;el('status').textContent=message;el('pasteHint').hidden=state!=='complete';}
+let fireworksTimer;
+function stopFireworks(){window.clearTimeout(fireworksTimer);el('fireworks').replaceChildren();}
+function celebrate(){stopFireworks();const colors=['#c32946','#5883bf','#bd8a39','#347b70'];for(let burst=0;burst<3;burst++){for(let i=0;i<18;i++){const spark=document.createElement('i'),angle=i*Math.PI*2/18,distance=48+Math.random()*36;spark.className='spark';for(const [key,value] of Object.entries({'--spark-color':colors[i%colors.length],'--origin-x':`${(burst-1)*65}px`,'--origin-y':`${-35-(burst%2)*25}px`,'--dx':`${Math.cos(angle)*distance}px`,'--dy':`${Math.sin(angle)*distance+15}px`,'--delay':`${burst*.2}s`}))spark.style.setProperty(key,value);el('fireworks').append(spark);}}fireworksTimer=window.setTimeout(stopFireworks,2000);}
+const ignored=c=>/[\p{P}\p{Z}\s]/u.test(c);
+function tokens(value){return Array.from(value).map((char,index)=>({char,index})).filter(x=>!ignored(x.char));}
+// Hirschberg alignment uses linear memory even for long manual passages.
+function row(a,b){let previous=new Uint32Array(b.length+1);for(const x of a){const next=new Uint32Array(b.length+1);for(let j=1;j<=b.length;j++)next[j]=x.char===b[j-1].char?previous[j-1]+1:Math.max(previous[j],next[j-1]);previous=next;}return previous;}
+function align(a,b,matchedA,matchedB){if(!a.length||!b.length)return;if(a.length===1){const j=b.findIndex(x=>x.char===a[0].char);if(j>=0){matchedA.add(a[0].index);matchedB.add(b[j].index);}return;}const mid=Math.floor(a.length/2),left=row(a.slice(0,mid),b),right=row(a.slice(mid).reverse(),b.slice().reverse());let split=0,best=-1;for(let j=0;j<=b.length;j++){const score=left[j]+right[b.length-j];if(score>best){best=score;split=j;}}align(a.slice(0,mid),b.slice(0,split),matchedA,matchedB);align(a.slice(mid),b.slice(split),matchedA,matchedB);}
+const changedSpans=new WeakMap();
+function render(target,value,matched,color){target.replaceChildren();const changed=[];let buffer='',last=null;function flush(){if(!buffer)return;const span=document.createElement('span');span.style.color=last;span.textContent=buffer;target.append(span);if(last!=='#000000')changed.push(span);buffer='';}Array.from(value).forEach((char,index)=>{const current=ignored(char)||matched.has(index)?'#000000':color;if(current!==last){flush();last=current;}buffer+=char;});flush();changedSpans.set(target,changed);}
+function countChanges(items,matched){return items.reduce((count,item)=>count+(matched.has(item.index)?0:1),0);}
+// Paint measured visual lines on the container only; clipboard HTML contains just its text spans.
+function paintChangedLines(target,tint){const bounds=target.getBoundingClientRect(),height=parseFloat(getComputedStyle(target).lineHeight),tops=[];for(const span of changedSpans.get(target)||[]){for(const rect of span.getClientRects()){if(!rect.width||!rect.height)continue;const top=Math.max(0,rect.top-bounds.top-target.clientTop-(height-rect.height)/2);if(!tops.some(y=>Math.abs(y-top)<2))tops.push(top);}}target.style.backgroundImage=tops.map(()=>`linear-gradient(${tint},${tint})`).join(',')||'none';target.style.backgroundSize=tops.map(()=>`100% ${height}px`).join(',');target.style.backgroundPosition=tops.map(y=>`0 ${y}px`).join(',');}
+let highlightFrame=0;
+function scheduleHighlights(){if(highlightFrame)window.cancelAnimationFrame(highlightFrame);highlightFrame=window.requestAnimationFrame(()=>{highlightFrame=0;if(el('results').hidden)return;paintChangedLines(el('oldResult'),'#c3294614');paintChangedLines(el('newResult'),'#5883bf1c');});}
+function compare(){const old=el('old').value,newText=el('new').value;el('copyFeedback').textContent='';if(!old&&!newText){stopFireworks();setStatus('请先输入至少一版文字。');return;}const a=tokens(old),b=tokens(newText),ma=new Set(),mb=new Set();align(a,b,ma,mb);
+// Match complete unchanged lines that moved, without treating isolated shared letters as moves.
+const lines=value=>{let offset=0;return value.split('\n').map(line=>{const item={start:offset,items:tokens(line),key:tokens(line).map(x=>x.char).join('')};offset+=Array.from(line).length+1;return item;});};
+const available=new Map();for(const line of lines(newText)){if(!line.key)continue;if(!available.has(line.key))available.set(line.key,[]);available.get(line.key).push(line);}for(const line of lines(old)){const moved=available.get(line.key)?.shift();if(moved){for(const x of line.items)ma.add(line.start+x.index);for(const x of moved.items)mb.add(moved.start+x.index);}}
+render(el('oldResult'),old,ma,'#c32946');render(el('newResult'),newText,mb,'#5883bf');el('results').hidden=false;el('deletedCount').textContent=countChanges(a,ma);el('addedCount').textContent=countChanges(b,mb);el('changeSummary').hidden=false;scheduleHighlights();el('copyOld').disabled=false;el('copyNew').disabled=false;setStatus('对比完成，可以分别复制两版结果。','complete');celebrate();}
+async function copy(id){const target=el(id),html='<html><body><div style="font-family:SimHei,黑体;font-size:10pt;color:#000000;white-space:pre-wrap">'+target.innerHTML.replace(/\n/g,'<br>')+'</div></body></html>',plain=target.textContent;await writeRich(html,plain);}
+async function writeRich(html,plain){try{if(navigator.clipboard?.write&&window.ClipboardItem){await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([plain],{type:'text/plain'})})]);}else{legacyCopy(html,plain);}el('copyFeedback').textContent='已复制，请在 WPS 文字中选择“保留源格式”。';}catch{try{legacyCopy(html,plain);el('copyFeedback').textContent='已复制，请在 WPS 文字中选择“保留源格式”。';}catch{el('copyFeedback').textContent='自动复制未成功，请重试或选中结果手动复制。';}}}
+function legacyCopy(html,plain){let copied=false;const handler=e=>{e.clipboardData.setData('text/html',html);e.clipboardData.setData('text/plain',plain);e.preventDefault();copied=true;};document.addEventListener('copy',handler);try{document.execCommand('copy');}finally{document.removeEventListener('copy',handler);}if(!copied)throw Error('copy');}
+function cellText(cell){let text='';const blocks=new Set(['P','DIV','LI']);function walk(node){if(node.nodeType===3){text+=node.nodeValue;return;}if(node.nodeType!==1)return;if(['SCRIPT','STYLE'].includes(node.tagName))return;if(node.tagName==='BR'){text+='\n';return;}const block=blocks.has(node.tagName);if(block&&text&&!text.endsWith('\n'))text+='\n';for(const child of node.childNodes)walk(child);if(block)text+='\n';}for(const child of cell.childNodes)walk(child);return text.replace(/\n$/,'').replace(/\r\n?/g,'\n');}
+function parseTsv(text){const rows=[],row=[];let value='',quoted=false;const source=text.replace(/\r\n?/g,'\n');for(let i=0;i<source.length;i++){const c=source[i];if(c==='"'&&(quoted||!value)){if(quoted&&source[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}else if(!quoted&&(c==='\t'||c==='\n')){row.push(value);value='';if(c==='\n'){rows.push(row.splice(0));}}else value+=c;}if(quoted)throw Error('引号未闭合');if(value||row.length||!rows.length){row.push(value);rows.push(row);}return rows;}
+function readTable(html,plain){if(html){const doc=new DOMParser().parseFromString(html,'text/html'),tables=doc.querySelectorAll('table');if(tables.length){if(tables.length!==1)throw Error('表格数量不正确');const table=tables[0],rows=Array.from(table.rows);if(rows.length!==1||rows[0].cells.length!==2)throw Error('表格尺寸不正确');const cells=Array.from(rows[0].cells);if(cells.some(c=>c.colSpan!==1||c.rowSpan!==1))throw Error('不支持合并单元格');return cells.map(cellText);}}const rows=parseTsv(plain);if(rows.length!==1||rows[0].length!==2)throw Error('表格尺寸不正确');return rows[0];}
+const copyButtonIds=['copyOld','copyNew','copyTable','copyOldBottom','copyNewBottom','copyTableBottom','exportPdf','exportPdfBottom'];
+function setCopyEnabled(enabled){for(const id of copyButtonIds)el(id).disabled=!enabled;}
+function invalidate(){setCopyEnabled(false);el('changeSummary').hidden=true;el('copyFeedback').textContent='';stopFireworks();if(!el('results').hidden){setStatus('输入已改变，请重新对比后复制！','changed');}}
+el('tablePaste').addEventListener('click',()=>el('tablePaste').focus());
+el('tablePaste').addEventListener('paste',event=>{event.preventDefault();try{const values=readTable(event.clipboardData.getData('text/html'),event.clipboardData.getData('text/plain'));el('old').value=values[0];el('new').value=values[1];invalidate();el('tableStatus').textContent='已填入：左列为旧版，右列为新版。请点击“对比并标色”。';}catch{el('tableStatus').textContent='请重新复制1行×2列的完整表格，不支持多行、多列或合并单元格。原有输入未改变。';}});
+el('copyTable').onclick=()=>{const style='border:none;background:transparent;font-family:SimHei,黑体;font-size:10pt;color:#000000;white-space:pre-wrap;vertical-align:top;width:50%;',cells=['oldResult','newResult'].map(id=>'<td width="50%" style="'+style+'">'+el(id).innerHTML.replace(/\n/g,'<br>')+'</td>').join(''),html='<html><body><table border="0" cellspacing="0" cellpadding="0" width="100%" style="border:none;border-collapse:collapse;table-layout:fixed;background:transparent;mso-border-alt:none"><tbody><tr>'+cells+'</tr></tbody></table></body></html>',quote=text=>'"'+text.replace(/"/g,'""')+'"';writeRich(html,['oldResult','newResult'].map(id=>quote(el(id).textContent)).join('\t'));};
+el('copyOld').onclick=el('copyOldBottom').onclick=()=>copy('oldResult');
+el('copyNew').onclick=el('copyNewBottom').onclick=()=>copy('newResult');
+el('copyTableBottom').onclick=el('copyTable').onclick;
+el('compare').onclick=()=>{compare();if(!el('results').hidden&&!el('copyOld').disabled){el('copyTop').hidden=false;el('copyBottom').hidden=false;el('pdfTop').hidden=false;el('pdfBottom').hidden=false;setCopyEnabled(true);}};
+el('exportPdf').onclick=el('exportPdfBottom').onclick=()=>exportResultsPdf();
+for(const id of ['old','new'])el(id).addEventListener('input',invalidate);
+function updateBackToTop(){el('backToTop').hidden=window.scrollY<=300;}
+window.addEventListener('scroll',updateBackToTop,{passive:true});
+window.addEventListener('pageshow',updateBackToTop);
+el('backToTop').onclick=()=>window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+updateBackToTop();
+window.addEventListener('resize',scheduleHighlights);
+if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(scheduleHighlights);observer.observe(el('oldResult'));observer.observe(el('newResult'));}
+if(document.fonts)document.fonts.ready.then(scheduleHighlights);
+</script>
+<script src="pdf-export.js"></script>
+</html>

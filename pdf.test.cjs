@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const context={};vm.createContext(context);vm.runInContext(fs.readFileSync('pdf-export.js','utf8'),context);
+const line=[{text:'保持甲',changed:false},{text:'新增 <&>',changed:true}];
+const old=Array.from({length:55},()=>line),newLines=Array.from({length:3},()=>line);
+const pages=context.pdfPaginate(old,newLines);
+assert.equal(pages.length,3);assert.equal(pages[0].old.length,26);assert.equal(pages[2].old.length,3);assert.equal(pages[2].new.length,0);
+assert.equal(context.pdfPaginate([],[]).length,1);
+const html=context.pdfPagesHtml(old,newLines);
+assert.equal((html.match(/旧版标注结果/g)||[]).length,3);
+assert.equal((html.match(/新版标注结果/g)||[]).length,3);
+assert(html.includes('第 3 / 3 页'));assert(html.includes('pdf-line deleted'));assert(html.includes('pdf-line added'));
+assert(html.includes('&lt;&amp;&gt;'));assert(html.includes('#c32946'));assert(html.includes('#5883bf'));
+assert(!context.pdfLineHtml([{text:'相同',changed:false}],'deleted').includes('pdf-line deleted'));
+console.log('Passed PDF pagination, repeated headings, page numbers, color and escaping checks.');

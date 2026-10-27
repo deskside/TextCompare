@@ -1,0 +1,20 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>PDF layout check</title><body>
+<script src="pdf-export.js"></script><script>
+(async()=>{
+document.head.insertAdjacentHTML('beforeend','<style>'+PDF_STYLE+'</style>');
+await document.fonts.ready;
+const source=document.createElement('div');
+const black=document.createElement('span');black.style.color='#000000';black.textContent='未变化内容。\n\n';source.append(black);
+const red=document.createElement('span');red.style.color='#c32946';red.textContent=('本行包含变化文字，并应当按固定列宽自动折行。 ABC123 '.repeat(6)+'\n').repeat(20);source.append(red);
+const old=pdfMeasureLines(document,source),empty=pdfMeasureLines(document,document.createElement('div'));
+if(old[0].some(x=>x.changed)||old[1].length)throw Error('unchanged or blank line');
+if(!old[2].some(x=>x.changed))throw Error('change missing');
+const reconstructed=old.map(line=>line.map(part=>part.text).join('')).join('');
+if(reconstructed!==source.textContent.replace(/\n/g,''))throw Error('text lost');
+document.body.innerHTML=pdfPagesHtml(old,empty);
+const pages=Array.from(document.querySelectorAll('.pdf-page'));
+if(pages.length<2)throw Error('pagination missing');
+for(const page of pages){const footer=page.querySelector('footer').getBoundingClientRect();for(const column of page.querySelectorAll('.pdf-column'))if(column.getBoundingClientRect().bottom>footer.top)throw Error('footer overlap');}
+document.body.dataset.test='passed';document.body.dataset.pages=pages.length;
+})().catch(error=>{document.body.dataset.test='failed';document.body.textContent=error.stack;});
+</script></body></html>
